@@ -168,5 +168,5 @@ cat <<- 'EOF' > docker-compose.yml
         - TZ=${TZ}
       ports:
         - ${FLARESOLVERR_PORT}:${FLARESOLVERR_PORT}
-      restart: unless-stopped"
+      restart: unless-stopped
 EOF
