@@ -1,20 +1,20 @@
 #!/bin/bash 
 
-_uid="$(id -u)"
 # Installation de Docker
 sudo apt install -y curl software-properties-common && apt update
 sudo apt install -y docker.io
 
-echo "Docker est installer"
 docker -v
 # Installation de Docker-Compose
 sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
-echo "Docker-Compose est installer"
 docker-compose -v
 
-sudo usermod -aG docker kbecois
+_user="$(id -u -n)"
+_uid="$(id -u)"
+
+sudo usermod -aG docker $_user
 
 # Création fichier pour docker-compose
 cat << EOF > .env
@@ -22,7 +22,7 @@ cat << EOF > .env
   PUID=$_uid
   PGID=$_uid
 
-  ROOT=/home/kbecois
+  ROOT=/home/$_user
 
   # Tautulli
   TAUTULLI_PORT=8181
@@ -30,8 +30,8 @@ cat << EOF > .env
   QBT_EULA=
   QBT_WEBUI_PORT=8080
   QBT_PORT=6881
-  QBT_CONFIG_PATH=/home/kbecois/qbittorent/config
-  QBT_DOWNLOADS_PATH=/home/kbecois/qbittorent/downloads
+  QBT_CONFIG_PATH=/home/$_user/qbittorent/config
+  QBT_DOWNLOADS_PATH=/home/$_user/qbittorent/downloads
   # overseerr
   OVERSERR_PORT=5055
   # flaresolverr
@@ -39,8 +39,6 @@ cat << EOF > .env
   # plex https://www.plex.tv/claim/
   PLEXCLAIM=
 EOF
-
-echo "Fichier .env a été créer"
 
 cat <<- 'EOF' > docker-compose.yml
   version: "3"
@@ -173,5 +171,3 @@ cat <<- 'EOF' > docker-compose.yml
             - ${FLARESOLVERR_PORT}:${FLARESOLVERR_PORT}
             restart: unless-stopped
 EOF
-
-echo "Fichier docker-compose.yml a été créer"
