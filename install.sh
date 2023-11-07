@@ -23,9 +23,8 @@ cat << EOF > .env
 
   # Tautulli
   TAUTULLI_PORT=8181
-  # qbittorrent-nox
+  # qbittorrent
   QBT_EULA=
-  QBT_VERSION=latest
   QBT_WEBUI_PORT=8080
   QBT_PORT=6881
   QBT_CONFIG_PATH=/home/kbecois/qbittorent/config
