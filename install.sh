@@ -1,19 +1,6 @@
 #!/bin/bash 
-
-_user="$(id -u -n)"
 _uid="$(id -u)"
-# Installation de Docker
-sudo apt install -y curl software-properties-common && apt update
-sudo apt install -y docker.io
-
-docker -v
-# Installation de Docker-Compose
-sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-
-docker-compose -v
-
-sudo usermod -aG docker $_user
+_user="$(id -u -n)"
 
 # Création fichier pour docker-compose
 cat << EOF > .env
@@ -42,6 +29,8 @@ cat << EOF > .env
     # flaresolverr
     FLARESOLVERR_PORT=8191
 EOF
+
+echo "Fichier .env a bien été créer"
 
 cat <<- 'EOF' > docker-compose.yml
     version: "3"
@@ -176,3 +165,4 @@ cat <<- 'EOF' > docker-compose.yml
         - ${FLARESOLVERR_PORT}:${FLARESOLVERR_PORT}
         restart: unless-stopped
 EOF
+echo "Fichier docker-compose.yml a bien été créer"
