@@ -1,8 +1,13 @@
-# Installation de Docker
+# Installation de Docker 
+sudo apt-get install \
+    ca-certificates \
+    curl \
+    gnupg \
+    apt-transport-https \
+    software-properties-common \
+    lsb-release
 
 # Add Docker's official GPG key:
-sudo apt-get update -y
-sudo apt-get install ca-certificates curl gnupg software-properties-common -y
 sudo install -m 0755 -d /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 sudo chmod a+r /etc/apt/keyrings/docker.gpg
@@ -13,23 +18,21 @@ echo \
   "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
+apt-cache policy docker-ce
+
 sudo apt-get update -y
 
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 
-sudo service docker start && docker -v && sudo docker run hello-world
-
-# Installation de Docker-Compose
-
-sudo apt-get update
-sudo apt-get install docker-compose-plugin -y
-
+sudo systemctl status docker
+sudo usermod -aG docker kbecois
+su - kbecois
+sudo usermod -aG docker kbecois
 docker compose version
 
-sudo usermod -aG docker $_user
-
-# Création fichier d'installation
+sudo service docker start && docker -v && sudo docker run hello-world
 
 _user="$(id -u -n)" && _fichier="install.sh" && sudo usermod -aG docker $_user && > $_fichier
+sudo usermod -aG docker $_user
 
 chmod 700 /home/$_user/$_fichier
