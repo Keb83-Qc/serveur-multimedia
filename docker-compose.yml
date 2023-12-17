@@ -5,107 +5,97 @@ services:
     container_name: plex
     network_mode: host
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/New_York
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
       - VERSION=docker
       - PLEX_CLAIM=${PLEXCLAIM}
     volumes:
-      - /home/ubuntu/plex/config:/config
-      - /home/ubuntu/plex/transcode:/transcode
-      - /home/ubuntu/plex/data:/data
-      - /data/plex/tvseries:/tv
-      - /data/plex/movies:/movies
-    ports:
-      - 32400:32400
-      - 1900:1900/udp
-      - 5353:5353/udp
-      - 8324:8324
-      - 32410:32410/udp
-      - 32412:32412/udp
-      - 32413:32413/udp
-      - 32414:32414/udp
-      - 32469:32469
+      - ${CONFIG}/plex/db:/config
+      - ${DATA}/tvseries:/tv
+      - ${DATA}/movies:/movies
+      - ${DATA}/transcode:/transcode
     restart: unless-stopped
   tautulli:
     image: lscr.io/linuxserver/tautulli:latest
     container_name: tautulli
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/New_York
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     volumes:
-      - /home/ubuntu/tautulli:/config
+      - ${CONFIG}/tautulli:/config
     ports:
-      - 8181:8181
+      - ${TAUTULLI_PORT}:${TAUTULLI_PORT}
     restart: unless-stopped
   overseerr:
     image: lscr.io/linuxserver/overseerr:latest
     container_name: overseerr
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/New_York
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     volumes:
-      - /home/ubuntu/overseerr/appdata/config:/config
+      - ${CONFIG}/overseerr/appdata/config:/config
     ports:
-      - 5055:5055
+      - ${OVERSEERR_PORT}:${OVERSEERR_PORT}
     restart: unless-stopped
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/New_York
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     volumes:
-      - /home/ubuntu/sonarr/config:/config
-      - /data/plex/tvseries:/tv
+      - ${CONFIG}/sonarr:/config
+      - ${DATA}/tvseries:/tv
     ports:
-      - 8989:8989
+      - ${SONARR_PORT}:${SONARR_PORT}
     restart: unless-stopped
   radarr:
     image: lscr.io/linuxserver/radarr:latest
     container_name: radarr
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/New_York
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     volumes:
-      - /home/ubuntu/radarr/config:/config
-      - /data/plex/movies:/movies
+      - ${CONFIG}/radarr:/config
+      - ${DATA}/movies:/movies
+      - ${DATA}/downloads:/downloads
     ports:
-      - 7878:7878
+      - ${RADARR_PORT}:${RADARR_PORT}
     restart: unless-stopped
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
     container_name: qbittorrent
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/New_York
-      - WEBUI_PORT=8080
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - WEBUI_PORT=${QBITTORRENT_PORT_WEB_UI}
     volumes:
-      - /home/ubuntu/qbittorent/config:/config
-      - /data/downloads:/downloads
+      - ${CONFIG}/qbittorent:/config
+      - ${DATA}/downloads:/downloads
     ports:
-      - 8080:8080
-      - 6881:6881
-      - 6881:6881/udp
+      - ${QBITTORRENT_PORT_WEB_UI}:${QBITTORRENT_PORT_WEB_UI}
+      - ${QBITTORRENT_PORT}:${QBITTORRENT_PORT}
+      - ${QBITTORRENT_PORT}:${QBITTORRENT_PORT}/udp
     restart: unless-stopped
   jackett:
     image: lscr.io/linuxserver/jackett:latest
     container_name: jackett
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/New_York
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
       - AUTO_UPDATE=true
     volumes:
-      - /home/ubuntu/jackett/downloads:/downloads
-      - /home/ubuntu/jackett/data:/config
+      - ${CONFIG}/jackett:/config
+      - ${DATA}/downloads:/downloads
     ports:
-      - 9117:9117
+      - ${JACKETT_PORT}:${JACKETT_PORT}
     restart: unless-stopped
   flaresolverr:
     image: ghcr.io/flaresolverr/flaresolverr:latest
@@ -114,7 +104,7 @@ services:
       - LOG_LEVEL=${LOG_LEVEL:-info}
       - LOG_HTML=${LOG_HTML:-false}
       - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
-      - TZ=America/New_York
+      - TZ=${TZ}
     ports:
       - "${PORT:-8191}:8191"
     restart: unless-stopped
@@ -122,18 +112,6 @@ services:
     container_name: wizarr
     image: ghcr.io/wizarrrr/wizarr:latest
     ports:
-      - 5690:5690
+      - ${WIZARR_PORT}:${WIZARR_PORT}
     volumes:
-      - /home/ubuntu/wizarr/database:/data/database
-  prowlarr:
-    image: lscr.io/linuxserver/prowlarr:latest
-    container_name: prowlarr
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/New_York
-    volumes:
-      - /home/ubuntu/prowlarr/data:/config
-    ports:
-      - 9696:9696
-    restart: unless-stopped
+      - ${CONFIG}/wizarr/database:/data/database
