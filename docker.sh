@@ -24,12 +24,12 @@ sudo apt-get update -y
 
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 
+sudo systemctl enable docker
 sudo systemctl status docker
 sudo usermod -aG docker $USER
+ su - $USER
 docker compose version
 
-sudo service docker start && docker -v && sudo docker run hello-world
-
-_user="$(id -u -n)" && _fichier="install.sh" && sudo usermod -aG docker $USER && > .env
+> .env
 
 chmod 700 /home/$USER/.env
