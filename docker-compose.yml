@@ -50,6 +50,7 @@ services:
     volumes:
       - ${CONFIG}/sonarr:/config
       - ${DATA}/tvseries:/tv
+      - ${DATA}/downloads:/downloads
     ports:
       - ${SONARR_PORT}:${SONARR_PORT}
     restart: unless-stopped
